@@ -72,12 +72,31 @@ public class ListActivityPerson extends AppCompatActivity {
         });
     }
 
+    public void eliminarRegistro(int index) {
+        db.collection("Documents").document(mPersonModelList.get(index).getId())
+                .delete()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(ListActivityPerson.this, "Registro eliminado", Toast.LENGTH_SHORT).show();
+                        verDatos();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(ListActivityPerson.this, "No se ha completado la operación" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     private void verDatos() {
         db.collection("Documents")
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        mPersonModelList.clear();
                         for (DocumentSnapshot doc : task.getResult()) {
                             PersonModel personModel = new PersonModel(
                                     doc.getString("id"),
@@ -88,7 +107,7 @@ public class ListActivityPerson extends AppCompatActivity {
                                     doc.getString("direccion"),
                                     doc.getString("facebook"),
                                     doc.getString("instagram")
-                                    );
+                            );
 
                             mPersonModelList.add(personModel);
                         }
@@ -102,6 +121,5 @@ public class ListActivityPerson extends AppCompatActivity {
             }
         });
     }
-
 
 }

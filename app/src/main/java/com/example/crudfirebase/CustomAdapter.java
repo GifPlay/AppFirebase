@@ -70,7 +70,7 @@ public class CustomAdapter extends RecyclerView.Adapter<ViewHolder> {
                         }
 
                         if (which == 1) {
-
+                            listActivityPerson.eliminarRegistro(position);
                         }
                     }
                 }).create().show();

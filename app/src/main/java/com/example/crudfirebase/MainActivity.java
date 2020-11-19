@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
 
     FirebaseFirestore db = FirebaseFirestore.getInstance();
+    String updateId, updateNombre, updateApaterno, updateAmaterno, updateSexo, updateDireccion, updateFacebook, updateInstagram;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,18 +55,60 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setTitle("Agregar registro");
 
 
+        final Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            actionBar.setTitle("Actualizar Datos");
+
+            updateId = bundle.getString("updateId");
+            updateNombre = bundle.getString("updateNombre");
+            updateApaterno = bundle.getString("updateApaterno");
+            updateAmaterno = bundle.getString("updateAmaterno");
+            updateSexo = bundle.getString("updateSexo");
+            updateDireccion = bundle.getString("updateDireccion");
+            updateFacebook = bundle.getString("updateFacebook");
+            updateInstagram = bundle.getString("updateInstagram");
+
+            etNombre.setText(updateNombre);
+            etAPaterno.setText(updateApaterno);
+            etAMaterno.setText(updateAmaterno);
+            etSexo.setText(updateSexo);
+            etDireccion.setText(updateDireccion);
+            etFacebook.setText(updateFacebook);
+            etInstagram.setText(updateInstagram);
+
+        } else {
+            actionBar.setTitle("Agregar");
+        }
+
+
         fabGuardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String nombre       = etNombre.getText().toString().trim();
-                String apaterno     = etAPaterno.getText().toString().trim();
-                String amaterno     = etAMaterno.getText().toString().trim();
-                String sexo         = etSexo.getText().toString().trim();
-                String direccion    = etDireccion.getText().toString().trim();
-                String facebook     = etFacebook.getText().toString().trim();
-                String instagram    = etInstagram.getText().toString().trim();
 
-                cargarDatos(nombre, apaterno, amaterno, sexo, direccion, facebook, instagram);
+                Bundle bundle1 = getIntent().getExtras();
+                if (bundle1 != null) {
+                    String id = updateId;
+                    String nombre = etNombre.getText().toString().trim();
+                    String apaterno = etAPaterno.getText().toString().trim();
+                    String amaterno = etAMaterno.getText().toString().trim();
+                    String sexo = etSexo.getText().toString().trim();
+                    String direccion = etDireccion.getText().toString().trim();
+                    String facebook = etFacebook.getText().toString().trim();
+                    String instagram = etInstagram.getText().toString().trim();
+
+                    actualizarDatos(id, nombre, apaterno, amaterno, sexo, direccion, facebook, instagram);
+
+                } else {
+                    String nombre = etNombre.getText().toString().trim();
+                    String apaterno = etAPaterno.getText().toString().trim();
+                    String amaterno = etAMaterno.getText().toString().trim();
+                    String sexo = etSexo.getText().toString().trim();
+                    String direccion = etDireccion.getText().toString().trim();
+                    String facebook = etFacebook.getText().toString().trim();
+                    String instagram = etInstagram.getText().toString().trim();
+
+                    cargarDatos(nombre, apaterno, amaterno, sexo, direccion, facebook, instagram);
+                }
             }
         });
 
@@ -80,8 +123,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     private void cargarDatos(String nombre, String apaterno, String amaterno, String sexo, String direccion, String facebook, String instagram) {
-        progressDialog.setTitle("Agregando registro a Firebase");
+        progressDialog.setTitle("Agregar datos");
         progressDialog.show();
         String id = UUID.randomUUID().toString();
 
@@ -103,6 +147,52 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Datos almacenados con éxito...", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                progressDialog.dismiss();
+                Toast.makeText(MainActivity.this, "Ha ocurrido un error..." + e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void actualizarDatos(String id, String nombre, String apaterno, String amaterno, String sexo, String direccion, String facebook, String instagram) {
+        progressDialog.setTitle("Actualizando datos a Firebase");
+        progressDialog.show();
+
+        /*
+        String id = UUID.randomUUID().toString();
+
+        Map<String, Object> doc = new HashMap<>();
+        doc.put("id", id);
+        doc.put("nombre", nombre);
+        doc.put("apaterno", apaterno);
+        doc.put("amaterno", amaterno);
+        doc.put("sexo", sexo);
+        doc.put("direccion", direccion);
+        doc.put("facebook", facebook);
+        doc.put("instagram", instagram);
+
+         */
+
+
+        db.collection("Documents")
+                .document(id).update(
+                "nombre", nombre,
+                "apaterno", apaterno,
+                "amaterno", amaterno,
+                "sexo", sexo,
+                "direccion", direccion,
+                "facebook", facebook,
+                "instagram", instagram
+        )
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        progressDialog.dismiss();
+                        Toast.makeText(MainActivity.this, "Actualización exitosa...", Toast.LENGTH_SHORT).show();
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 progressDialog.dismiss();

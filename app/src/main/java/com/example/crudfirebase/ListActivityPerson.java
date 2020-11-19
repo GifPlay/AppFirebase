@@ -1,6 +1,7 @@
 package com.example.crudfirebase;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,6 +48,9 @@ public class ListActivityPerson extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Ver registros");
 
         recyclerview = findViewById(R.id.recyclerview);
         recyclerview.setHasFixedSize(true);
